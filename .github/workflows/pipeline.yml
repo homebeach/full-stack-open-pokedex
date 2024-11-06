@@ -10,7 +10,7 @@ on:
 
 env:
   # Define a condition to check for #skip in commit messages when pushing to main
-  SKIP_DEPLOY: ${{ contains(join(github.event.commits.*.message, ' '), '#skip') }}
+  SKIP_DEPLOY: ${{ contains('#skip') }}
 
 jobs:
   simple_deployment_pipeline:
