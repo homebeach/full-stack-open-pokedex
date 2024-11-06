@@ -48,7 +48,7 @@ jobs:
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-20.04
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && env.SKIP_DEPLOY == 'false' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.env.SKIP_DEPLOY == 'false' }}
     steps:
       - uses: actions/checkout@v4 # Ensures the repository is available
 
