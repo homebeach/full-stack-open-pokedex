@@ -68,11 +68,7 @@ jobs:
 
       - name: Send success notification to Discord
         if: ${{ success() }}
-        uses: Ilshidur/action-discord-webhook@v1
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-          username: "GitHub Actions"
-          content: |
-            **New version tagged and pushed**: `${{ github.ref_name }}`
-            **Commit**: `${{ github.sha }}`
-            **By**: `${{ github.actor }}`
+        run: |
+          curl -H "Content-Type: application/json" \
+              -d '{"content": "New version tagged and pushed: '${{ github.ref_name }}' for commit '${{ github.sha }}' by '${{ github.actor }}.'"}' \
+              ${{ secrets.DISCORD_WEBHOOK }}
