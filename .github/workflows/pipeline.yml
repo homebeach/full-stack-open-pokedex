@@ -66,10 +66,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Notify new version tag on Discord
+      - name: Send success notification to Discord
         if: ${{ success() }}
-        uses: rjstone/discord-webhook-notify@v1.0.4
+        uses: Ilshidur/action-discord-webhook@v1
         with:
-          severity: success
-          details: "New version tagged and pushed: ${{ github.ref_name }} for commit ${{ github.sha }} by ${{ github.actor }}."
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          username: "GitHub Actions"
+          content: |
+            **New version tagged and pushed**: `${{ github.ref_name }}`
+            **Commit**: `${{ github.sha }}`
+            **By**: `${{ github.actor }}`
