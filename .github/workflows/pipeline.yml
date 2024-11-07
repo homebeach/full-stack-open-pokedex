@@ -29,6 +29,19 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Notify build failure on Discord
+        if: ${{ failure() && steps.build.outcome == 'failure' }}
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        with:
+          severity: error
+          details: |
+            **Build Failed**
+            Commit: ${{ github.sha }}
+            Committer: ${{ github.actor }}
+            Commit Message: ${{ github.event.head_commit.message }}
+            [View commit on GitHub](${{ github.event.head_commit.url }})
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
       - name: Run tests
         run: npm test
 
@@ -52,3 +65,11 @@ jobs:
         uses: anothrNick/github-tag-action@f278d49d30cdd8775cc3e7dd00b5ee11686ee297
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify new version tag on Discord
+        if: ${{ success() }}
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        with:
+          severity: success
+          details: "New version tagged and pushed: ${{ github.ref_name }} for commit ${{ github.sha }} by ${{ github.actor }}."
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
