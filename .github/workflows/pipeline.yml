@@ -31,16 +31,17 @@ jobs:
 
       - name: Notify build failure on Discord
         if: ${{ failure() && steps.build.outcome == 'failure' }}
-        uses: rjstone/discord-webhook-notify@v1.0.4
-        with:
-          severity: error
-          details: |
-            **Build Failed**
-            Commit: ${{ github.sha }}
-            Committer: ${{ github.actor }}
-            Commit Message: ${{ github.event.head_commit.message }}
-            [View commit on GitHub](${{ github.event.head_commit.url }})
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+          COMMITTER: ${{ github.actor }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          COMMIT_URL: ${{ github.event.head_commit.url }}
+          REPO_NAME: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          MESSAGE="Build failed for repository $REPO_NAME on branch $BRANCH_NAME for commit $COMMIT_SHA by $COMMITTER. Commit message: '$COMMIT_MESSAGE'. [View commit on GitHub]($COMMIT_URL)"
+          curl -H "Content-Type: application/json" -d "{\"content\": \"$MESSAGE\"}" $WEBHOOK_URL
 
       - name: Run tests
         run: npm test
@@ -68,7 +69,12 @@ jobs:
 
       - name: Send success notification to Discord
         if: ${{ success() }}
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+          COMMITTER: ${{ github.actor }}
+          REPO_NAME: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          curl -H "Content-Type: application/json" \
-              -d '{"content": "New version tagged and pushed: '${{ github.ref_name }}' for commit '${{ github.sha }}' by '${{ github.actor }}.'"}' \
-              ${{ secrets.DISCORD_WEBHOOK }}
+          MESSAGE="New version tagged and pushed: $REPO_NAME on branch $BRANCH_NAME for commit $COMMIT_SHA by $COMMITTER."
+          curl -H "Content-Type: application/json" -d "{\"content\": \"$MESSAGE\"}" $WEBHOOK_URL
