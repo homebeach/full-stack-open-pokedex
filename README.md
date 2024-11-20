@@ -1,6 +1,6 @@
 # Full Stack Open Part 11
 
-Solutions to the exercises from Part 11 of the Full Stack Open course (fullstackopen.com).
+Solutions to the exercises from Part 11 of the Full Stack Open course (fullstackopen.com). All exercise solutions are contained within this repository. To view the solutions for individual exercises, please refer to the commit history.
 
 # Full Stack open CI/CD
 
